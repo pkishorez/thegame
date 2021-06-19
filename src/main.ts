@@ -1,71 +1,100 @@
+import { GameConfig } from "./config";
+import { Divider } from "./game/dividers";
+import { MyCar } from "./game/mycar";
 import { Opponents } from "./game/opponents";
-import { Stream } from "./game/stream";
+import { renderDivider, renderOpponent } from "./renderer/dom";
 import "./style.css";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
-let elMap: { [id: string]: { elem: HTMLDivElement; x?: number } } = {};
+let elMap: { [id: string]: HTMLDivElement } = {};
 
-const dividers = new Stream({
-  gap: 70,
+const dividers = new Divider(GameConfig, {
   onAdd(id) {
-    let element = document.createElement("div");
-
-    element.style.position = "absolute";
-    element.style.backgroundColor = "white";
-    element.style.width = "10px";
-    element.style.height = "40px";
-
-    elMap[id] = { elem: element, x: 200 - 5 };
-
-    app.appendChild(element);
+    elMap[id] = renderDivider();
+    app.appendChild(elMap[id]);
   },
   onRemove(id) {
-    elMap[id].elem?.remove();
+    elMap[id].remove();
     delete elMap[id];
   },
-  height: 600,
-  step: 1,
 });
-const opponents = new Opponents({
-  gap: 100,
-  step: 3,
-  height: 600,
-  width: 400,
+
+const opponents = new Opponents(GameConfig, {
   onAdd: (id) => {
-    let element = document.createElement("div");
-
-    element.style.position = "absolute";
-    element.style.backgroundColor = "red";
-    element.style.width = "40px";
-    element.style.height = "50px";
-
-    elMap[id] = { elem: element };
-
-    app.appendChild(element);
+    elMap[id] = renderOpponent();
+    app.appendChild(elMap[id]);
   },
   onRemove: (id) => {
-    elMap[id].elem?.remove();
+    elMap[id].remove();
     delete elMap[id];
   },
 });
 
-const func = () => {
+const mycar = new MyCar(GameConfig);
+const mycardiv = document.createElement("div");
+mycardiv.style.position = "absolute";
+app.append(mycardiv);
+
+const tick = () => {
+  // Update game dimensions.
+  app.style.width = `${GameConfig.arena.width}px`;
+  app.style.height = `${GameConfig.arena.height}px`;
+
+  // Update dividers.
+  dividers.setConfig(GameConfig);
   dividers.tick();
   dividers.getItems().forEach(({ id, y }) => {
-    const { elem, x } = elMap[id];
-    elem.style.left = `${x}px`;
+    const { height, width } = GameConfig.divider;
+
+    const elem = elMap[id];
+    elem.style.left = `${GameConfig.arena.width / 2 - width / 2}px`;
     elem.style.top = `${y}px`;
+    elem.style.width = `${width}px`;
+    elem.style.height = `${height}px`;
   });
 
+  // Update Opponents.
+  opponents.setConfig(GameConfig);
   opponents.tick();
   opponents.getOpponents().forEach(({ id, x, y }) => {
-    const { elem } = elMap[id];
-    elem.style.left = `${x - 20}px`;
+    const { height, width } = GameConfig.car;
+
+    const elem = elMap[id];
+    elem.style.left = `${x - width / 2}px`;
     elem.style.top = `${y}px`;
+    elem.style.width = `${width}px`;
+    elem.style.height = `${height}px`;
   });
 
-  requestAnimationFrame(func);
+  // Update my car
+  mycar.setConfig(GameConfig);
+  mycar.tick();
+  const { x, y } = mycar.getDimensions();
+  mycardiv.style.width = `${GameConfig.car.width}px`;
+  mycardiv.style.height = `${GameConfig.car.height}px`;
+  mycardiv.style.backgroundColor = "teal";
+  mycardiv.style.left = `${x - GameConfig.car.width / 2}px`;
+  mycardiv.style.top = `${y}px`;
+
+  requestAnimationFrame(tick);
 };
 
-func();
+function setup() {
+  window.addEventListener("keydown", (ev) => {
+    switch (ev.key) {
+      case "ArrowLeft": {
+        mycar.moveLeft();
+        break;
+      }
+      case "ArrowRight": {
+        mycar.moveRight();
+        break;
+      }
+    }
+  });
+
+  tick();
+}
+
+setup();

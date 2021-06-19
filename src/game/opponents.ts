@@ -1,48 +1,53 @@
+import { IGameConfig } from "./config";
 import { Stream } from "./stream";
 
 interface Opponent {
-  x: number;
+  position: "left" | "right";
 }
 
 export class Opponents {
   opponentMap: {
     [id: number]: Opponent;
   } = {};
-  width: number;
   stream: Stream;
   onRemove: any;
   onAdd: any;
+  config: IGameConfig;
 
-  constructor({
-    width,
-    height,
-    gap = 50,
-    step = 4,
-    onAdd,
-    onRemove,
-  }: {
-    gap?: number;
-    step?: number;
-    width: number;
-    height: number;
-    onAdd?: Opponents["stream"]["onAdd"];
-    onRemove?: Opponents["stream"]["onRemove"];
-  }) {
+  constructor(
+    config: IGameConfig,
+    {
+      onAdd,
+      onRemove,
+    }: {
+      onAdd?: Opponents["stream"]["onAdd"];
+      onRemove?: Opponents["stream"]["onRemove"];
+    }
+  ) {
     this.onAdd = onAdd;
     this.onRemove = onRemove;
-    this.width = width;
+    this.config = config;
     this.stream = new Stream({
-      gap,
-      height,
-      step,
+      gap: config.car.gap,
+      height: config.arena.height,
+      step: config.car.step,
       onAdd: this.add,
       onRemove: this.remove,
     });
   }
 
+  setConfig(config: IGameConfig) {
+    this.config = config;
+    this.stream.setConfig({
+      gap: config.car.gap,
+      height: config.arena.height,
+      step: config.car.step,
+    });
+  }
+
   add = (id: number) => {
     this.opponentMap[id] = {
-      x: Math.random() > 0.5 ? this.width / 4 : (this.width * 3) / 4,
+      position: Math.random() > 0.5 ? "left" : "right",
     };
     this.onAdd(id);
   };
@@ -52,11 +57,15 @@ export class Opponents {
   };
 
   getOpponents() {
-    return this.stream.getItems().map(({ id, y }) => ({
-      id,
-      y,
-      x: this.opponentMap[id].x,
-    }));
+    const { arena } = this.config;
+    return this.stream.getItems().map(({ id, y }) => {
+      const { position } = this.opponentMap[id];
+      return {
+        id,
+        y,
+        x: position === "left" ? arena.width / 4 : (arena.width * 3) / 4,
+      };
+    });
   }
 
   tick() {

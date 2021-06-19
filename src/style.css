@@ -16,7 +16,6 @@ body {
   position: relative;
   margin: auto;
   margin-top: 150px;
-  max-width: 400px;
-  background-color: black;
-  height: 600px;
+  background-color: #474747;
+  overflow: hidden;
 }

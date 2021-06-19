@@ -5,38 +5,45 @@ interface Item {
   id: number;
 }
 
-export class Stream {
+interface IStreamConstructor {
   gap: number;
-  items: Item[] = [];
   step: number;
   height: number;
-  onAdd: (id: Item["id"]) => void;
-  onRemove: (id: Item["id"]) => void;
-
-  constructor({
-    gap,
-    step,
-    height,
-    onAdd,
-    onRemove,
-  }: {
+  onAdd?: Stream["onAdd"];
+  onRemove?: Stream["onRemove"];
+}
+export class Stream {
+  config!: {
     gap: number;
     step: number;
     height: number;
-    onAdd?: Stream["onAdd"];
-    onRemove?: Stream["onRemove"];
-  }) {
-    this.gap = gap;
-    this.step = step;
+  };
+  items: Item[] = [];
+  onAdd: (id: Item["id"]) => void;
+  onRemove: (id: Item["id"]) => void;
+
+  constructor({ gap, step, height, onAdd, onRemove }: IStreamConstructor) {
     this.onAdd = onAdd ?? ((item) => item);
     this.onRemove = onRemove ?? (() => {});
-    this.height = height;
+    this.setConfig({ gap, step, height });
 
     this.addItem({ y: -gap });
     this.addItem({ y: -2 * gap });
   }
 
-  addItem({ y }: { y: number }) {
+  setConfig({
+    gap,
+    step,
+    height,
+  }: Pick<IStreamConstructor, "gap" | "step" | "height">) {
+    this.config = {
+      gap,
+      height,
+      step,
+    };
+  }
+
+  private addItem({ y }: { y: number }) {
     const item = {
       y,
       id: unique_no++,
@@ -46,22 +53,17 @@ export class Stream {
 
     return item;
   }
-  popItem() {
-    const item = this.items.pop();
-
-    if (item) {
-      this.onRemove(item.id);
-    }
-  }
 
   getItems() {
     return this.items;
   }
 
   tick() {
+    const { gap, height, step } = this.config;
+
     this.items = this.items.map((v) => ({
       ...v,
-      y: v.y + this.step,
+      y: v.y + step,
     }));
 
     // Check the end!
@@ -71,7 +73,7 @@ export class Stream {
       throw new Error("Second last not found.");
     }
 
-    if (secondLast.y > this.height) {
+    if (secondLast.y > height) {
       // Remove Last!
       const last = this.items.pop();
       if (!last) {
@@ -83,7 +85,7 @@ export class Stream {
       if (firstItem.y > 0) {
         // Here the item should be mutated.
         this.items.unshift(last);
-        last.y = firstItem.y - this.gap;
+        last.y = firstItem.y - gap;
       } else {
         this.onRemove(last.id);
       }
@@ -97,7 +99,7 @@ export class Stream {
 
     if (firstItem.y > 0) {
       // Create new item.
-      this.addItem({ y: firstItem.y - this.gap });
+      this.addItem({ y: firstItem.y - gap });
     }
   }
 }
