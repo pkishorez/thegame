@@ -8,9 +8,16 @@ export interface IGameConfig {
   car: {
     width: number;
     height: number;
-    gap: number;
+  };
+
+  opponent: {
     step: number;
-    myCarStep: number;
+    gap: number;
+    color: string;
+  };
+  mycar: {
+    step: number;
+    color: string;
   };
 
   divider: {

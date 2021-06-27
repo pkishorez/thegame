@@ -10,9 +10,15 @@ export const GameConfig: IGameConfig = {
   car: {
     width: 40,
     height: 60,
+  },
+  opponent: {
     gap: 300,
     step: 3,
-    myCarStep: 10,
+    color: "#f0f003",
+  },
+  mycar: {
+    step: 10,
+    color: "#00f0f0",
   },
   divider: {
     width: 10,
@@ -25,19 +31,87 @@ export const GameConfig: IGameConfig = {
 const datconfig = new gui.GUI({
   preset: "thegame",
 });
+datconfig.open();
 
+let _onFinish: () => void;
+
+export const onChange = (func: () => void) => {
+  _onFinish = func;
+};
+const onFinish = () => {
+  if (_onFinish) {
+    _onFinish();
+  }
+};
+
+// Game Config.
 const game = datconfig.addFolder("game");
-game.add(GameConfig.arena, "width").min(100).max(600);
-game.add(GameConfig.arena, "height").min(100).max(1000);
+game.add(GameConfig.arena, "width").min(100).max(600).onFinishChange(onFinish);
+game
+  .add(GameConfig.arena, "height")
+  .min(100)
+  .max(1000)
+  .onFinishChange(onFinish);
+game
+  .add(GameConfig.arena, "lanes")
+  .min(2)
+  .max(10)
+  .step(1)
+  .onFinishChange(onFinish);
 
+// Dividers Config.
 const dividers = datconfig.addFolder("dividers");
-dividers.add(GameConfig.divider, "width").min(10).max(500);
-dividers.add(GameConfig.divider, "height").min(10).max(500);
-dividers.add(GameConfig.divider, "gap").min(10).max(500);
-dividers.add(GameConfig.divider, "step").min(1).max(20);
+dividers
+  .add(GameConfig.divider, "width")
+  .min(1)
+  .max(100)
+  .onFinishChange(onFinish);
+dividers
+  .add(GameConfig.divider, "height")
+  .min(1)
+  .max(100)
+  .onFinishChange(onFinish);
+dividers
+  .add(GameConfig.divider, "gap")
+  .min(1)
+  .max(100)
+  .onFinishChange(onFinish);
 
+// Cars Config.
 const cars = datconfig.addFolder("cars");
-cars.add(GameConfig.car, "width").min(10).max(100);
-cars.add(GameConfig.car, "height").min(10).max(200);
-cars.add(GameConfig.car, "gap").min(10).max(500);
-cars.add(GameConfig.car, "step").min(1).max(20);
+cars.add(GameConfig.car, "width").min(1).max(200).onFinishChange(onFinish);
+cars.add(GameConfig.car, "height").min(1).max(200).onFinishChange(onFinish);
+
+const opponents = datconfig.addFolder("opponent");
+opponents
+  .add(GameConfig.opponent, "gap")
+  .min(1)
+  .max(200)
+  .onFinishChange(onFinish);
+
+opponents.addColor(GameConfig.opponent, "color").onFinishChange(onFinish);
+
+// MyCar Config.
+const mycar = datconfig.addFolder("mycar");
+mycar.addColor(GameConfig.mycar, "color").onFinishChange(onFinish);
+
+// Speed.
+const speed = datconfig.addFolder("speed");
+speed
+  .add(GameConfig.divider, "step")
+  .name("Dividers")
+  .min(1)
+  .max(20)
+  .onFinishChange(onFinish);
+speed
+  .add(GameConfig.opponent, "step")
+  .name("Opponent")
+  .min(1)
+  .max(20)
+  .onFinishChange(onFinish);
+speed
+  .add(GameConfig.mycar, "step")
+  .name("My Car")
+  .min(1)
+  .max(200)
+  .onFinishChange(onFinish);

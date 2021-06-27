@@ -11,6 +11,7 @@ interface IStreamConstructor {
   height: number;
   onAdd?: Stream["onAdd"];
   onRemove?: Stream["onRemove"];
+  onReuse?: Stream["onReuse"];
 }
 export class Stream {
   config!: {
@@ -21,10 +22,19 @@ export class Stream {
   items: Item[] = [];
   onAdd: (id: Item["id"]) => void;
   onRemove: (id: Item["id"]) => void;
+  onReuse: (id: Item["id"]) => void;
 
-  constructor({ gap, step, height, onAdd, onRemove }: IStreamConstructor) {
+  constructor({
+    gap,
+    step,
+    height,
+    onAdd,
+    onRemove,
+    onReuse,
+  }: IStreamConstructor) {
     this.onAdd = onAdd ?? ((item) => item);
     this.onRemove = onRemove ?? (() => {});
+    this.onReuse = onReuse ?? (() => {});
     this.setConfig({ gap, step, height });
 
     this.addItem({ y: -gap });
@@ -83,9 +93,10 @@ export class Stream {
       // Should we add this to top? To reuse this item.
       const firstItem = this.items[0];
       if (firstItem.y > 0) {
-        // Here the item should be mutated.
+        // Here the item is reused.
         this.items.unshift(last);
         last.y = firstItem.y - gap;
+        this.onReuse(last.id);
       } else {
         this.onRemove(last.id);
       }

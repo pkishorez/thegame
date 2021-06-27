@@ -1,4 +1,4 @@
-import { GameConfig } from "./config";
+import { GameConfig, onChange } from "./config";
 import { Divider } from "./game/dividers";
 import { MyCar } from "./game/mycar";
 import { Opponents } from "./game/opponents";
@@ -7,29 +7,17 @@ import "./style.css";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
-let elMap: { [id: string]: HTMLDivElement } = {};
-
-const dividers = new Divider(GameConfig, {
-  onAdd(id) {
-    elMap[id] = renderDivider();
-    app.appendChild(elMap[id]);
-  },
-  onRemove(id) {
-    elMap[id].remove();
-    delete elMap[id];
-  },
+let elMap: { [id: string]: HTMLDivElement | undefined } = {};
+onChange(() => {
+  Object.entries(elMap).forEach(([key, val]) => {
+    val && val.remove();
+    delete elMap[key];
+  });
 });
 
-const opponents = new Opponents(GameConfig, {
-  onAdd: (id) => {
-    elMap[id] = renderOpponent();
-    app.appendChild(elMap[id]);
-  },
-  onRemove: (id) => {
-    elMap[id].remove();
-    delete elMap[id];
-  },
-});
+const dividers = new Divider(GameConfig);
+
+const opponents = new Opponents(GameConfig);
 
 const mycar = new MyCar(GameConfig);
 const mycardiv = document.createElement("div");
@@ -44,12 +32,18 @@ const tick = () => {
   // Update dividers.
   dividers.setConfig(GameConfig);
   dividers.tick();
-  dividers.getItems().forEach(({ id, y }) => {
+  dividers.getItems().forEach(({ id, y, x }) => {
     const { height, width } = GameConfig.divider;
 
-    const elem = elMap[id];
-    elem.style.left = `${GameConfig.arena.width / 2 - width / 2}px`;
-    elem.style.top = `${y}px`;
+    let elem = elMap[id];
+    if (!elem) {
+      const div = document.createElement("div");
+      elem = renderDivider(div);
+      elMap[id] = div;
+      app.append(elem);
+    }
+
+    elem.style.transform = `translate(${x}px, ${y}px)`;
     elem.style.width = `${width}px`;
     elem.style.height = `${height}px`;
   });
@@ -60,11 +54,18 @@ const tick = () => {
   opponents.getOpponents().forEach(({ id, x, y }) => {
     const { height, width } = GameConfig.car;
 
-    const elem = elMap[id];
-    elem.style.left = `${x - width / 2}px`;
-    elem.style.top = `${y}px`;
-    elem.style.width = `${width}px`;
-    elem.style.height = `${height}px`;
+    let opponent = elMap[id];
+
+    if (!opponent) {
+      const div = document.createElement("div");
+      opponent = renderOpponent(div);
+      elMap[id] = div;
+      app.append(opponent);
+    }
+    opponent.style.backgroundColor = GameConfig.opponent.color;
+    opponent.style.transform = `translate(${x - width / 2}px, ${y}px)`;
+    opponent.style.width = `${width}px`;
+    opponent.style.height = `${height}px`;
   });
 
   // Update my car
@@ -73,9 +74,10 @@ const tick = () => {
   const { x, y } = mycar.getDimensions();
   mycardiv.style.width = `${GameConfig.car.width}px`;
   mycardiv.style.height = `${GameConfig.car.height}px`;
-  mycardiv.style.backgroundColor = "teal";
-  mycardiv.style.left = `${x - GameConfig.car.width / 2}px`;
-  mycardiv.style.top = `${y}px`;
+  mycardiv.style.backgroundColor = GameConfig.mycar.color;
+  mycardiv.style.transform = `translate(${
+    x - GameConfig.car.width / 2
+  }px, ${y}px)`;
 
   requestAnimationFrame(tick);
 };

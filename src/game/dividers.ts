@@ -4,21 +4,15 @@ import { Stream } from "./stream";
 export class Divider {
   private config: IGameConfig;
   stream: Stream;
-  constructor(
-    config: IGameConfig,
-    {
-      onAdd,
-      onRemove,
-    }: { onAdd: Stream["onAdd"]; onRemove: Stream["onRemove"] }
-  ) {
+
+  constructor(config: IGameConfig) {
     this.config = config;
     const { divider } = this.config;
+
     this.stream = new Stream({
       gap: divider.gap,
-      height: this.config.arena.height,
       step: divider.step,
-      onRemove,
-      onAdd,
+      height: config.arena.height,
     });
   }
 
@@ -37,6 +31,19 @@ export class Divider {
     this.stream.tick();
   }
   getItems() {
-    return this.stream.getItems();
+    const { arena, divider } = this.config;
+
+    return this.stream.getItems().flatMap((item) => {
+      let arr = [];
+      for (let i = 1; i < this.config.arena.lanes; i++) {
+        arr.push({
+          ...item,
+          id: `${item.id}-${i}`,
+          x: (arena.width / arena.lanes) * i - divider.width / 2,
+        });
+      }
+
+      return arr;
+    });
   }
 }

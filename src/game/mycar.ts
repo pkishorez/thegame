@@ -15,6 +15,7 @@ export class MyCar {
 
   setConfig(config: IGameConfig) {
     this.config = config;
+    this.y = config.arena.height - config.car.height - 20;
   }
 
   moveLeft() {
@@ -35,13 +36,12 @@ export class MyCar {
   }
 
   tick() {
-    const positionMap: { [index: number]: number } = {
-      0: this.config.arena.width / 4,
-      1: (this.config.arena.width * 3) / 4,
-    };
+    const targetPosition =
+      (this.config.arena.width * (this.positionIndex * 2 + 1)) /
+      (this.config.arena.lanes * 2);
 
-    const d = positionMap[this.positionIndex] - this.x;
-    const diff = d !== 0 ? (d / Math.abs(d)) * this.config.car.myCarStep : 0;
+    const d = targetPosition - this.x;
+    const diff = d !== 0 ? (d / Math.abs(d)) * this.config.mycar.step : 0;
 
     this.x += Math.abs(diff) > Math.abs(d) ? d : diff;
   }
