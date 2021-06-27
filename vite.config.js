@@ -6,7 +6,6 @@ const config = {
     manifest: true,
     outDir: "docs",
   },
-  base: "/docs",
 };
 
 export default config;
