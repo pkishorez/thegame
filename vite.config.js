@@ -4,6 +4,7 @@
 const config = {
   build: {
     manifest: true,
+    outDir: "docs",
   },
 };
 
