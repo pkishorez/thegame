@@ -15,11 +15,12 @@ export class Opponents {
   constructor(config: IGameConfig) {
     this.config = config;
     this.stream = new Stream({
-      gap: config.opponent.gap,
-      height: config.arena.height,
-      step: config.opponent.step,
+      config: {
+        gap: config.opponent.gap,
+        length: config.arena.height,
+        step: config.opponent.step,
+      },
       onAdd: this.onAdd,
-      onReuse: this.onAdd,
       onRemove: this.remove,
     });
   }
@@ -28,7 +29,7 @@ export class Opponents {
     this.config = config;
     this.stream.setConfig({
       gap: config.opponent.gap,
-      height: config.arena.height,
+      length: config.arena.height,
       step: config.opponent.step,
     });
   }
@@ -46,7 +47,7 @@ export class Opponents {
 
   getOpponents() {
     const { arena } = this.config;
-    return this.stream.getItems().map(({ id, y }) => {
+    return this.stream.getItems().map(({ id, pos: y }) => {
       const { position } = this.opponentMap[id];
 
       return {

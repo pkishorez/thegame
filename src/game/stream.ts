@@ -1,67 +1,39 @@
 let unique_no = 0;
 
 interface Item {
-  y: number;
+  pos: number;
   id: number;
 }
 
-interface IStreamConstructor {
+interface StreamConfig {
   gap: number;
   step: number;
-  height: number;
-  onAdd?: Stream["onAdd"];
-  onRemove?: Stream["onRemove"];
-  onReuse?: Stream["onReuse"];
+  length: number;
+}
+
+interface Props {
+  config: StreamConfig;
+  onAdd?: (id: Item["id"]) => void;
+  onRemove?: (id: Item["id"]) => void;
 }
 export class Stream {
-  config!: {
-    gap: number;
-    step: number;
-    height: number;
-  };
+  config!: Props["config"];
   items: Item[] = [];
-  onAdd: (id: Item["id"]) => void;
-  onRemove: (id: Item["id"]) => void;
-  onReuse: (id: Item["id"]) => void;
+  onAdd: Props["onAdd"];
+  onRemove: Props["onRemove"];
 
-  constructor({
-    gap,
-    step,
-    height,
-    onAdd,
-    onRemove,
-    onReuse,
-  }: IStreamConstructor) {
-    this.onAdd = onAdd ?? ((item) => item);
-    this.onRemove = onRemove ?? (() => {});
-    this.onReuse = onReuse ?? (() => {});
-    this.setConfig({ gap, step, height });
-
-    this.addItem({ y: -gap });
-    this.addItem({ y: -2 * gap });
+  constructor({ config, onAdd, onRemove }: Props) {
+    this.onAdd = onAdd;
+    this.onRemove = onRemove;
+    this.setConfig(config);
   }
 
-  setConfig({
-    gap,
-    step,
-    height,
-  }: Pick<IStreamConstructor, "gap" | "step" | "height">) {
+  setConfig({ gap, step, length }: StreamConfig) {
     this.config = {
       gap,
-      height,
+      length,
       step,
     };
-  }
-
-  private addItem({ y }: { y: number }) {
-    const item = {
-      y,
-      id: unique_no++,
-    };
-    this.onAdd(item.id);
-    this.items.unshift(item);
-
-    return item;
   }
 
   getItems() {
@@ -69,48 +41,62 @@ export class Stream {
   }
 
   tick() {
-    const { gap, height, step } = this.config;
+    const { step } = this.config;
 
-    this.items = this.items.map((v) => ({
-      ...v,
-      y: v.y + step,
+    // TICK
+    this.items = this.items.map((item) => ({
+      ...item,
+      pos: item.pos + step,
     }));
 
-    // Check the end!
+    this.removeEndItemIfOutside();
+    this.prependItemIfPossible();
+  }
+
+  private removeEndItemIfOutside() {
     const secondLast = this.items[this.items.length - 2];
 
-    if (!secondLast) {
-      throw new Error("Second last not found.");
+    if (secondLast && this.isBeyondLength(secondLast)) {
+      this.removeEndItem();
     }
+  }
 
-    if (secondLast.y > height) {
-      // Remove Last!
-      const last = this.items.pop();
-      if (!last) {
-        throw new Error("Last not found!");
-      }
+  private removeEndItem() {
+    const last = this.items.pop();
 
-      // Should we add this to top? To reuse this item.
-      const firstItem = this.items[0];
-      if (firstItem.y > 0) {
-        // Here the item is reused.
-        this.items.unshift(last);
-        last.y = firstItem.y - gap;
-        this.onReuse(last.id);
-      } else {
-        this.onRemove(last.id);
-      }
+    if (last) {
+      this.onRemove?.(last.id);
     }
+  }
 
-    // Check for the first!
-    const firstItem = this.items[0];
-    if (!firstItem) {
-      throw new Error("First item not found.");
-    }
+  private prependItemIfPossible() {
+    const { gap } = this.config;
+    const top = this.items[0];
 
-    if (firstItem.y > 0) {
-      // Create new item.
-      this.addItem({ y: firstItem.y - gap });
+    if (!top) {
+      this.prependItem(this.newItem(-gap));
+    } else if (top.pos > 0) {
+      this.prependItem(this.newItem(top.pos - gap));
     }
+  }
+
+  private prependItem(item: Item) {
+    this.onAdd?.(item.id);
+    this.items.unshift(item);
+
+    return item;
+  }
+
+  private newItem(pos: number) {
+    return {
+      pos,
+      id: unique_no++,
+    };
+  }
+
+  private isBeyondLength({ pos: y }: Item) {
+    const { length } = this.config;
+
+    return y > length;
   }
 }

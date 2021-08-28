@@ -10,10 +10,16 @@ export class Divider {
     const { divider } = this.config;
 
     this.stream = new Stream({
-      gap: divider.gap,
-      step: divider.step,
-      height: config.arena.height,
+      config: {
+        gap: divider.gap,
+        step: divider.step,
+        length: config.arena.height,
+      },
     });
+  }
+
+  getId(n: number, laneIndex: number) {
+    return `divider:${n}-${laneIndex}`;
   }
 
   setConfig(config: IGameConfig) {
@@ -22,7 +28,7 @@ export class Divider {
 
     this.stream.setConfig({
       gap: divider.gap,
-      height: this.config.arena.height,
+      length: this.config.arena.height,
       step: divider.step,
     });
   }
