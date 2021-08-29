@@ -1,4 +1,4 @@
-import { config, onChange } from "./dev";
+import { config, setupDev } from "./dev";
 import { GameEngine } from "./engine/engine";
 import { DOMRenderer } from "./renderer/dom";
 
@@ -6,6 +6,7 @@ function setup() {
   const engine = new GameEngine(config);
   const renderer = new DOMRenderer(config);
 
+  const { onChange } = setupDev();
   onChange(() => {
     engine.setConfig(config);
     renderer.setConfig(config);
@@ -24,7 +25,7 @@ function setup() {
     }
   });
 
-  document.body.append(renderer.getDOM());
+  document.getElementById("app")?.append(renderer.getDOM());
 
   function tick() {
     engine.tick();
