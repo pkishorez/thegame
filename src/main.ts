@@ -6,11 +6,11 @@ function setup() {
   const engine = new GameEngine(config);
   const renderer = new DOMRenderer(config);
 
-  // const { onChange } = setupDev();
-  // onChange(() => {
-  //   engine.setConfig(config);
-  //   renderer.setConfig(config);
-  // });
+  const { onChange } = setupDev();
+  onChange(() => {
+    engine.setConfig(config);
+    renderer.setConfig(config);
+  });
 
   window.addEventListener("keydown", (ev) => {
     switch (ev.key) {
