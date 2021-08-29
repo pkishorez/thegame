@@ -1,0 +1,46 @@
+html,
+body {
+  margin: 0;
+}
+body {
+  background-color: gray;
+}
+
+.game {
+  position: relative;
+  z-index: -1;
+  background-color: black;
+  margin: auto;
+  margin-top: 100px;
+  overflow: hidden;
+  transition: width 0.3s, height 0.3s;
+
+  .divider,
+  .opponent,
+  .mycar {
+    position: absolute;
+    transform-origin: center;
+    top: 0;
+    left: 0;
+  }
+
+  .mycar {
+    background-color: white;
+    box-shadow: 0px 0px 10px white;
+  }
+  .divider {
+    background-color: white;
+    width: var(--divider-width);
+    height: var(--divider-height);
+    transition: width 0.3s, height 0.3s, opacity 0.1s, left 0.3s,
+      transform 0.05s;
+  }
+
+  .opponent {
+    background-color: orange;
+    width: var(--opponent-width);
+    height: var(--opponent-height);
+    transition: width 0.3s, height 0.3s, opacity 0.1s, left 0.3s,
+      transform 0.05s;
+  }
+}

@@ -5,7 +5,7 @@ interface Item {
   id: number;
 }
 
-interface StreamConfig {
+export interface StreamConfig {
   gap: number;
   step: number;
   length: number;
@@ -43,7 +43,6 @@ export class Stream {
   tick() {
     const { step } = this.config;
 
-    // TICK
     this.items = this.items.map((item) => ({
       ...item,
       pos: item.pos + step,
