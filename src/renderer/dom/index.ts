@@ -10,18 +10,28 @@ export class DOMRenderer {
   private dividers: Dividers;
   private opponents: Opponents;
   mycar: MyCar;
+  arena: HTMLDivElement;
 
   constructor(config: GameConfig) {
     this.uiWrapper = document.createElement("div");
     this.uiWrapper.classList.add("game");
 
+    const left = document.createElement("div");
+    left.classList.add("left-footpath");
+    const right = document.createElement("div");
+    right.classList.add("right-footpath");
+
     this.mycar = new MyCar(config);
     this.dividers = new Dividers(config);
     this.opponents = new Opponents(config);
 
-    this.uiWrapper.append(this.mycar.getDOM());
-    this.uiWrapper.append(this.dividers.getWrapper());
-    this.uiWrapper.append(this.opponents.getWrapper());
+    this.arena = document.createElement("div");
+    this.arena.classList.add("arena");
+    this.arena.append(this.mycar.getDOM());
+    this.arena.append(this.dividers.getWrapper());
+    this.arena.append(this.opponents.getWrapper());
+
+    this.uiWrapper.append(left, this.arena, right);
 
     this.setConfig(config);
   }
@@ -31,8 +41,8 @@ export class DOMRenderer {
   }
 
   setConfig(config: GameConfig) {
-    this.uiWrapper.style.width = config.arena.width + "px";
-    this.uiWrapper.style.height = config.arena.height + "px";
+    this.arena.style.width = config.arena.width + "px";
+    this.arena.style.height = config.arena.height + "px";
 
     this.mycar.setConfig(config);
     this.dividers.setConfig(config);
