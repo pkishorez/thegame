@@ -25,7 +25,8 @@ export class MyCar {
   }
 
   render(engineState: EngineState) {
-    this.ui.style.left =
-      engineState.mycar.posX - this.config.car.width / 2 + "px";
+    this.ui.style.transform = `translateX(${
+      engineState.mycar.posX - this.config.car.width / 2
+    }px)`;
   }
 }
