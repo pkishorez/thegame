@@ -24,6 +24,13 @@ function setup() {
       }
     }
   });
+  window.addEventListener("click", (ev) => {
+    if (ev.offsetX > window.innerWidth / 2) {
+      engine.moveRight();
+    } else {
+      engine.moveLeft();
+    }
+  });
 
   document.getElementById("app")?.append(renderer.getDOM());
 
