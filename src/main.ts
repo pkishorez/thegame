@@ -8,7 +8,8 @@ function setup() {
   let canvasRenderer = new CanvasRenderer(config);
 
   const { onChange } = setupDev();
-  onChange(() => {
+
+  const onConfigChange = () => {
     engine.setConfig(config);
 
     canvasRenderer.getDOM().style.display = config.renderer.canvas
@@ -18,7 +19,10 @@ function setup() {
 
     domRenderer.setConfig(config);
     canvasRenderer.setConfig(config);
-  });
+  };
+  onChange(onConfigChange);
+
+  onConfigChange();
 
   window.addEventListener("keydown", (ev) => {
     switch (ev.key) {
