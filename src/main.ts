@@ -4,12 +4,18 @@ import "./style.scss";
 
 function setup() {
   const engine = new GameEngine(config);
-  const domRenderer = new DOMRenderer(config);
-  const canvasRenderer = new CanvasRenderer(config);
+  let domRenderer = new DOMRenderer(config);
+  let canvasRenderer = new CanvasRenderer(config);
 
   const { onChange } = setupDev();
   onChange(() => {
     engine.setConfig(config);
+
+    canvasRenderer.getDOM().style.display = config.renderer.canvas
+      ? "block"
+      : "none";
+    domRenderer.getDOM().style.display = config.renderer.dom ? "block" : "none";
+
     domRenderer.setConfig(config);
     canvasRenderer.setConfig(config);
   });
@@ -41,8 +47,13 @@ function setup() {
   function tick() {
     engine.tick();
     const state = engine.getState();
-    domRenderer.render(state);
-    canvasRenderer.render(state);
+
+    if (config.renderer.dom) {
+      domRenderer.render(state);
+    }
+    if (config.renderer.canvas) {
+      canvasRenderer.render(state);
+    }
 
     requestAnimationFrame(tick);
   }

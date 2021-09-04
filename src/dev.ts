@@ -28,6 +28,11 @@ export const config: GameConfig = {
     gap: 50,
     step: 1,
   },
+
+  renderer: {
+    canvas: true,
+    dom: false,
+  },
 };
 
 export function setupDev() {
@@ -111,6 +116,13 @@ export function setupDev() {
     .min(1)
     .max(200)
     .onFinishChange(onFinish);
+
+  const renderer = datconfig.addFolder("renderer");
+  renderer
+    .add(config.renderer, "canvas")
+    .name("Canvas")
+    .onFinishChange(onFinish);
+  renderer.add(config.renderer, "dom").name("DOM").onFinishChange(onFinish);
 
   return { onChange };
 }

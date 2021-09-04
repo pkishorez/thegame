@@ -26,4 +26,9 @@ export interface GameConfig {
     gap: number;
     step: number;
   };
+
+  renderer: {
+    canvas: boolean;
+    dom: boolean;
+  };
 }
