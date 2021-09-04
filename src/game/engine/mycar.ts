@@ -1,4 +1,4 @@
-import { GameConfig } from "../config";
+import { GameConfig } from "../../config";
 
 interface MyCarConfig {
   height: number;
@@ -24,7 +24,7 @@ export class MyCar {
       height: config.arena.height,
       width: config.arena.width,
       lanes: config.arena.lanes,
-      step: config.mycar.step,
+      step: config.car.mycar.step,
     };
   }
 

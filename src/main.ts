@@ -1,15 +1,17 @@
 import { config, setupDev } from "./dev";
-import { GameEngine } from "./engine/engine";
-import { DOMRenderer } from "./renderer/dom";
+import { GameEngine, DOMRenderer, CanvasRenderer } from "./game";
+import "./style.scss";
 
 function setup() {
   const engine = new GameEngine(config);
-  const renderer = new DOMRenderer(config);
+  const domRenderer = new DOMRenderer(config);
+  const canvasRenderer = new CanvasRenderer(config);
 
   const { onChange } = setupDev();
   onChange(() => {
     engine.setConfig(config);
-    renderer.setConfig(config);
+    domRenderer.setConfig(config);
+    canvasRenderer.setConfig(config);
   });
 
   window.addEventListener("keydown", (ev) => {
@@ -32,11 +34,15 @@ function setup() {
     }
   });
 
-  document.getElementById("app")?.append(renderer.getDOM());
+  document
+    .getElementById("app")
+    ?.append(domRenderer.getDOM(), canvasRenderer.getDOM());
 
   function tick() {
     engine.tick();
-    renderer.render(engine.getState());
+    const state = engine.getState();
+    domRenderer.render(state);
+    canvasRenderer.render(state);
 
     requestAnimationFrame(tick);
   }

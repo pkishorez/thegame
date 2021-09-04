@@ -8,16 +8,16 @@ export interface GameConfig {
   car: {
     width: number;
     height: number;
-  };
 
-  opponent: {
-    step: number;
-    gap: number;
-    color: string;
-  };
-  mycar: {
-    step: number;
-    color: string;
+    opponent: {
+      step: number;
+      gap: number;
+      color: string;
+    };
+    mycar: {
+      step: number;
+      color: string;
+    };
   };
 
   divider: {

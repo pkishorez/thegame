@@ -1,4 +1,4 @@
-import { diff } from "../../utils";
+import { diff } from "../../../utils";
 
 interface ListItem {
   id: number;

@@ -1,11 +1,12 @@
-import { GameConfig } from "../../config";
+import { GameConfig } from "../../../config";
 import { EngineState } from "../../engine/engine";
+import { Renderer } from "../type";
 import { Dividers } from "./dividers";
 import { MyCar } from "./mycar";
 import { Opponents } from "./opponents";
 import "./style.scss";
 
-export class DOMRenderer {
+export class DOMRenderer implements Renderer {
   private uiWrapper: HTMLDivElement;
   private dividers: Dividers;
   private opponents: Opponents;
@@ -14,12 +15,7 @@ export class DOMRenderer {
 
   constructor(config: GameConfig) {
     this.uiWrapper = document.createElement("div");
-    this.uiWrapper.classList.add("game");
-
-    const left = document.createElement("div");
-    left.classList.add("left-footpath");
-    const right = document.createElement("div");
-    right.classList.add("right-footpath");
+    this.uiWrapper.classList.add("dom-renderer");
 
     this.mycar = new MyCar(config);
     this.dividers = new Dividers(config);
@@ -31,7 +27,7 @@ export class DOMRenderer {
     this.arena.append(this.dividers.getWrapper());
     this.arena.append(this.opponents.getWrapper());
 
-    this.uiWrapper.append(left, this.arena, right);
+    this.uiWrapper.append(this.arena);
 
     this.setConfig(config);
   }

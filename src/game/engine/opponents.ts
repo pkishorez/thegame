@@ -1,4 +1,4 @@
-import { GameConfig } from "../config";
+import { GameConfig } from "../../config";
 import { Stream, StreamConfig } from "./stream";
 
 interface Opponent {
@@ -34,7 +34,9 @@ export class Opponents {
 
   private transformConfig(config: GameConfig): OpponentConfig {
     const {
-      opponent: { gap, step },
+      car: {
+        opponent: { gap, step },
+      },
       arena: { height: length, lanes },
     } = config;
 

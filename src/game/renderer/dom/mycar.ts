@@ -1,4 +1,4 @@
-import { GameConfig } from "../../config";
+import { GameConfig } from "../../../config";
 import { EngineState } from "../../engine/engine";
 import "./style.scss";
 

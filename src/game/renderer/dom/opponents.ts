@@ -1,8 +1,8 @@
-import { GameConfig } from "../../config";
+import { GameConfig } from "../../../config";
 import { EngineState } from "../../engine/engine";
 import { ListUI } from "./list-ui";
 
-export class Dividers {
+export class Opponents {
   private config!: GameConfig;
   private ui: ListUI;
 
@@ -10,29 +10,29 @@ export class Dividers {
     this.setConfig(config);
 
     this.ui = new ListUI({
-      key: "divider",
-      wrapperID: "dividers",
+      key: "opponent",
+      wrapperID: "opponents",
       onAdd: (elem) => {
         for (let i = 0; i < this.config.arena.lanes - 1; i++) {
           const d = document.createElement("div");
-          d.classList.add("divider");
+          d.classList.add("opponent");
           elem.append(d);
         }
       },
-      onUpdate: (elem, v: EngineState["dividers"][0]) => {
+      onUpdate: (elem, v: EngineState["opponents"][0]) => {
         elem.querySelectorAll("div").forEach((d, i) => {
-          d.style.transform = `translateY(${v.posY}px)`;
+          const laneWidth = this.config.arena.width / this.config.arena.lanes;
+          const opponent = v.opponents[i];
 
-          const left = Math.round(
-            (this.config.arena.width / this.config.arena.lanes) * (i + 1) -
-              this.config.divider.width / 2
-          );
-
-          if (parseInt(d.style.left, 10) !== left) {
-            d.style.left = `${left}px`;
+          if (!opponent) {
+            return;
           }
 
-          d.style.opacity = i + 1 >= this.config.arena.lanes ? "0" : "1";
+          d.style.transform = `translate(${
+            laneWidth * opponent.laneIndex -
+            this.config.car.width / 2 +
+            laneWidth / 2
+          }px, ${opponent.posY}px)`;
         });
       },
     });
@@ -46,16 +46,16 @@ export class Dividers {
     this.config = config;
 
     document.documentElement.style.setProperty(
-      "--divider-width",
-      `${this.config.divider.width}px`
+      "--opponent-width",
+      `${this.config.car.width}px`
     );
     document.documentElement.style.setProperty(
-      "--divider-height",
-      `${this.config.divider.height}px`
+      "--opponent-height",
+      `${this.config.car.height}px`
     );
   }
 
   updateState(state: EngineState) {
-    this.ui.update(state.dividers);
+    this.ui.update(state.opponents);
   }
 }

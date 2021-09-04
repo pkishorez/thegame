@@ -1,4 +1,4 @@
-import { GameConfig } from "../config";
+import { GameConfig } from "../../config";
 import { Stream } from "./stream";
 
 export class Dividers {

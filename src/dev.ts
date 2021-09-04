@@ -10,16 +10,18 @@ export const config: GameConfig = {
   car: {
     width: 20,
     height: 40,
+
+    opponent: {
+      gap: 300,
+      step: 3,
+      color: "#f0f003",
+    },
+    mycar: {
+      step: 5,
+      color: "#00f0f0",
+    },
   },
-  opponent: {
-    gap: 300,
-    step: 3,
-    color: "#f0f003",
-  },
-  mycar: {
-    step: 5,
-    color: "#00f0f0",
-  },
+
   divider: {
     width: 2,
     height: 30,
@@ -78,16 +80,16 @@ export function setupDev() {
 
   const opponents = datconfig.addFolder("opponent");
   opponents
-    .add(config.opponent, "gap")
+    .add(config.car.opponent, "gap")
     .min(1)
     .max(200)
     .onFinishChange(onFinish);
 
-  opponents.addColor(config.opponent, "color").onFinishChange(onFinish);
+  opponents.addColor(config.car.opponent, "color").onFinishChange(onFinish);
 
   // MyCar Config.
   const mycar = datconfig.addFolder("mycar");
-  mycar.addColor(config.mycar, "color").onFinishChange(onFinish);
+  mycar.addColor(config.car.mycar, "color").onFinishChange(onFinish);
 
   // Speed.
   const speed = datconfig.addFolder("speed");
@@ -98,13 +100,13 @@ export function setupDev() {
     .max(20)
     .onFinishChange(onFinish);
   speed
-    .add(config.opponent, "step")
+    .add(config.car.opponent, "step")
     .name("Opponent")
     .min(1)
     .max(20)
     .onFinishChange(onFinish);
   speed
-    .add(config.mycar, "step")
+    .add(config.car.mycar, "step")
     .name("My Car")
     .min(1)
     .max(200)

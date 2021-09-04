@@ -1,26 +1,4 @@
-html,
-body {
-  margin: 0;
-}
-body {
-  background-color: gray;
-}
-
-.game {
-  display: flex;
-  justify-content: center;
-
-  margin: auto;
-  margin-top: 100px;
-  transition: width 0.3s, height 0.3s;
-
-  .left-footpath,
-  .right-footpath {
-    background-color: green;
-    width: 20px;
-    align-self: stretch;
-  }
-
+.dom-renderer {
   .arena {
     position: relative;
     overflow: hidden;

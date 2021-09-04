@@ -1,4 +1,4 @@
-import { GameConfig } from "../config";
+import { GameConfig } from "../../config";
 import { Dividers } from "./dividers";
 import { MyCar } from "./mycar";
 import { Opponents } from "./opponents";
