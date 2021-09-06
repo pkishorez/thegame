@@ -8,8 +8,8 @@ export class Dividers {
     this.stream = new Stream({ config: this.transformConfig(config) });
   }
 
-  tick() {
-    this.stream.tick();
+  tick(step = 1) {
+    this.stream.tick(step);
   }
 
   getState() {

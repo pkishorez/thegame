@@ -28,11 +28,11 @@ export class MyCar {
     };
   }
 
-  tick() {
+  tick(step = 1) {
     const target = this.getPosXOfLane(this.laneIndex);
     if (target !== this.x) {
       const prevX = this.x;
-      this.x += Math.sign(target - this.x) * this.config.step;
+      this.x += Math.sign(target - this.x) * this.config.step * step;
 
       if (Math.sign(target - prevX) !== Math.sign(target - this.x)) {
         this.x = target;

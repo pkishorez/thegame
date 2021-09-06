@@ -40,12 +40,12 @@ export class Stream {
     return this.items;
   }
 
-  tick() {
+  tick(globalStep = 1) {
     const { step } = this.config;
 
     this.items = this.items.map((item) => ({
       ...item,
-      pos: item.pos + step,
+      pos: item.pos + step * globalStep,
     }));
 
     this.removeEndItemIfOutside();

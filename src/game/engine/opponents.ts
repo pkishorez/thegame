@@ -78,7 +78,7 @@ export class Opponents {
     });
   }
 
-  tick() {
-    this.stream.tick();
+  tick(step = 1) {
+    this.stream.tick(step);
   }
 }

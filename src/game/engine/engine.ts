@@ -26,10 +26,10 @@ export class GameEngine {
     this.opponents.setConfig(config);
   }
 
-  tick() {
-    this.dividers.tick();
-    this.opponents.tick();
-    this.mycar.tick();
+  tick(step = 1) {
+    this.dividers.tick(step);
+    this.opponents.tick(step);
+    this.mycar.tick(step);
   }
 
   getState() {
