@@ -20,6 +20,7 @@ export class MyCar {
 
   setConfig(config: GameConfig) {
     this.config = config;
+    this.ui.style.backgroundColor = config.car.mycar.color;
     this.ui.style.width = config.car.width + "px";
     this.ui.style.height = config.car.height + "px";
   }

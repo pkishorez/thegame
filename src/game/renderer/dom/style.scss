@@ -26,7 +26,7 @@
     }
 
     .opponent {
-      background-color: orange;
+      background-color: var(--opponent-color);
       width: var(--opponent-width);
       height: var(--opponent-height);
       transition: width 0.3s, height 0.3s, opacity 0.1s, left 0.3s,

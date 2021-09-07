@@ -46,6 +46,10 @@ export class Opponents {
     this.config = config;
 
     document.documentElement.style.setProperty(
+      "--opponent-color",
+      this.config.car.opponent.color
+    );
+    document.documentElement.style.setProperty(
       "--opponent-width",
       `${this.config.car.width}px`
     );

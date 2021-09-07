@@ -35,10 +35,10 @@ export class CanvasRenderer implements Renderer {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Render my car
-    this.context.fillStyle = "yellow";
+    this.context.fillStyle = this.config.car.mycar.color;
     this.context.fillRect(
       state.mycar.posX - this.config.car.width / 2,
-      this.canvas.height - this.config.car.height - 30,
+      this.canvas.height - this.config.car.height - 20,
       this.config.car.width,
       this.config.car.height
     );
@@ -62,7 +62,7 @@ export class CanvasRenderer implements Renderer {
 
     state.opponents.forEach((opponent) => {
       opponent.opponents.forEach((opp) => {
-        this.context.fillStyle = "red";
+        this.context.fillStyle = this.config.car.opponent.color;
         this.context.fillRect(
           opp.laneIndex * laneWidth + laneWidth / 2 - this.config.car.width / 2,
           opp.posY,
