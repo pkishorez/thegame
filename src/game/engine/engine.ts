@@ -7,9 +7,9 @@ export type EngineState = ReturnType<GameEngine["getState"]>;
 
 export class GameEngine {
   config: GameConfig;
-  dividers!: Dividers;
-  mycar!: MyCar;
-  opponents!: Opponents;
+  dividers: Dividers;
+  mycar: MyCar;
+  opponents: Opponents;
 
   constructor(config: GameConfig) {
     this.config = config;

@@ -70,9 +70,9 @@ export class Opponents {
 
       return {
         id,
-        opponents: opponents.map((v) => ({
+        opponents: opponents.map(({ dY, ...v }) => ({
           ...v,
-          posY: posY + v.dY,
+          posY: posY + dY,
         })),
       };
     });

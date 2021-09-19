@@ -32,6 +32,7 @@ export const config: GameConfig = {
   renderer: {
     canvas: true,
     dom: false,
+    react: false,
   },
 };
 
@@ -123,6 +124,7 @@ export function setupDev() {
     .name("Canvas")
     .onFinishChange(onFinish);
   renderer.add(config.renderer, "dom").name("DOM").onFinishChange(onFinish);
+  renderer.add(config.renderer, "react").name("REACT").onFinishChange(onFinish);
 
   return { onChange };
 }

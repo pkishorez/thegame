@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export const diff = <A, B>(oldArr: A[], newArr: B[]) => {
   const oldSet = new Set(oldArr.map((v: any) => v.id));
   const newSet = new Set(newArr.map((v: any) => v.id));
@@ -8,4 +10,19 @@ export const diff = <A, B>(oldArr: A[], newArr: B[]) => {
     added,
     removed,
   };
+};
+
+export const useRequestAnimationFrame = () => {
+  const [tick, setTick] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setTick(!tick);
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  });
+
+  return tick;
 };

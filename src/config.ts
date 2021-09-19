@@ -30,5 +30,6 @@ export interface GameConfig {
   renderer: {
     canvas: boolean;
     dom: boolean;
+    react: boolean;
   };
 }

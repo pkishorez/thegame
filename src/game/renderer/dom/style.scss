@@ -21,16 +21,12 @@
       background-color: white;
       width: var(--divider-width);
       height: var(--divider-height);
-      transition: width 0.3s, height 0.3s, opacity 0.1s, left 0.3s,
-        transform 0.05s;
     }
 
     .opponent {
       background-color: var(--opponent-color);
       width: var(--opponent-width);
       height: var(--opponent-height);
-      transition: width 0.3s, height 0.3s, opacity 0.1s, left 0.3s,
-        transform 0.05s;
     }
   }
 }

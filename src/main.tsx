@@ -1,11 +1,22 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import { config, setupDev } from "./dev";
 import { GameEngine, DOMRenderer, CanvasRenderer } from "./game";
+import { ReactRenderer } from "./game/renderer/react";
 import "./style.scss";
+import { useRequestAnimationFrame } from "./utils";
 
 function setup() {
   const engine = new GameEngine(config);
   let domRenderer = new DOMRenderer(config);
   let canvasRenderer = new CanvasRenderer(config);
+  const ReactRenderer_ = () => {
+    useRequestAnimationFrame();
+
+    return <ReactRenderer config={config} state={engine.getState()} />;
+  };
+  const reactRendererDOM = document.createElement("div");
+  reactRendererDOM.classList.add("react-renderer");
 
   const { onChange } = setupDev();
 
@@ -16,6 +27,8 @@ function setup() {
       ? "block"
       : "none";
     domRenderer.getDOM().style.display = config.renderer.dom ? "block" : "none";
+
+    reactRendererDOM.style.display = config.renderer.react ? "block" : "none";
 
     domRenderer.setConfig(config);
     canvasRenderer.setConfig(config);
@@ -46,7 +59,8 @@ function setup() {
 
   document
     .getElementById("app")
-    ?.append(domRenderer.getDOM(), canvasRenderer.getDOM());
+    ?.append(domRenderer.getDOM(), canvasRenderer.getDOM(), reactRendererDOM);
+  ReactDOM.render(<ReactRenderer_ />, reactRendererDOM);
 
   function tick() {
     engine.tick();
