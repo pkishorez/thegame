@@ -31,5 +31,6 @@ export interface GameConfig {
     canvas: boolean;
     dom: boolean;
     react: boolean;
+    three: boolean;
   };
 }

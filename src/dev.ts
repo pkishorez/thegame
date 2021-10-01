@@ -33,6 +33,7 @@ export const config: GameConfig = {
     canvas: true,
     dom: false,
     react: false,
+    three: true,
   },
 };
 
@@ -125,6 +126,7 @@ export function setupDev() {
     .onFinishChange(onFinish);
   renderer.add(config.renderer, "dom").name("DOM").onFinishChange(onFinish);
   renderer.add(config.renderer, "react").name("REACT").onFinishChange(onFinish);
+  renderer.add(config.renderer, "three").name("THREE").onFinishChange(onFinish);
 
   return { onChange };
 }

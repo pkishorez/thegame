@@ -1,22 +1,40 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { config, setupDev } from "./dev";
-import { GameEngine, DOMRenderer, CanvasRenderer } from "./game";
-import { ReactRenderer } from "./game/renderer/react";
+import { GameEngine, Renderer } from "./game";
 import "./style.scss";
 import { useRequestAnimationFrame } from "./utils";
 
 function setup() {
   const engine = new GameEngine(config);
-  let domRenderer = new DOMRenderer(config);
-  let canvasRenderer = new CanvasRenderer(config);
+  let domRenderer = new Renderer.DOMRenderer(config);
+  let canvasRenderer = new Renderer.CanvasRenderer(config);
   const ReactRenderer_ = () => {
     useRequestAnimationFrame();
 
-    return <ReactRenderer config={config} state={engine.getState()} />;
+    const state = engine.getState();
+
+    return (
+      <>
+        {config.renderer.react && (
+          <Renderer.ReactRenderer config={config} state={state} />
+        )}
+        {config.renderer.three && (
+          <Renderer.ReactThreeRenderer config={config} state={state} />
+        )}
+      </>
+    );
   };
   const reactRendererDOM = document.createElement("div");
   reactRendererDOM.classList.add("react-renderer");
+
+  const ReactThreeRenderer_ = () => {
+    useRequestAnimationFrame();
+
+    return (
+      <Renderer.ReactThreeRenderer config={config} state={engine.getState()} />
+    );
+  };
 
   const { onChange } = setupDev();
 
@@ -27,8 +45,6 @@ function setup() {
       ? "block"
       : "none";
     domRenderer.getDOM().style.display = config.renderer.dom ? "block" : "none";
-
-    reactRendererDOM.style.display = config.renderer.react ? "block" : "none";
 
     domRenderer.setConfig(config);
     canvasRenderer.setConfig(config);
