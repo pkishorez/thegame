@@ -6,7 +6,7 @@ body {
   background-color: gray;
 }
 
-#app {
+#app > .renderer-container {
   display: flex;
   justify-content: center;
 

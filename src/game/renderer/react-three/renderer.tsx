@@ -61,7 +61,7 @@ const Child = ({
   useFrame(({ camera }) => {
     camera.position.set(
       state.mycar.posX - config.arena.width / 2,
-      -config.arena.height / 2 - config.car.height * 2,
+      -config.arena.height / 2 - config.car.height,
       config.car.height * 3
     );
     camera.lookAt(state.mycar.posX - config.arena.width / 2, 0, 0);

@@ -33,6 +33,7 @@ export const ReactRenderer = ({
             width: car.width,
             height: car.height,
             transform: `translateX(${state.mycar.posX - car.width / 2}px)`,
+            backgroundColor: config.car.mycar.color,
           }}
         />
         <div className="dividers">

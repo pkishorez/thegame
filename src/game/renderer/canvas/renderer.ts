@@ -29,6 +29,7 @@ export class CanvasRenderer implements Renderer {
 
     this.canvas.width = config.arena.width;
     this.canvas.height = config.arena.height;
+    this.canvas.style.height = config.arena.height + "px";
   }
 
   render(state: EngineState) {

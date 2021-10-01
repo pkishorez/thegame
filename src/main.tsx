@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import { config, setupDev } from "./dev";
 import { GameEngine, Renderer } from "./game";
@@ -11,28 +11,23 @@ function setup() {
   let canvasRenderer = new Renderer.CanvasRenderer(config);
   const ReactRenderer_ = () => {
     useRequestAnimationFrame();
+    const divRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      divRef.current?.append(domRenderer.getDOM(), canvasRenderer.getDOM());
+    }, []);
 
     const state = engine.getState();
 
     return (
-      <>
+      <div ref={divRef} className="renderer-container">
         {config.renderer.react && (
           <Renderer.ReactRenderer config={config} state={state} />
         )}
         {config.renderer.three && (
           <Renderer.ReactThreeRenderer config={config} state={state} />
         )}
-      </>
-    );
-  };
-  const reactRendererDOM = document.createElement("div");
-  reactRendererDOM.classList.add("react-renderer");
-
-  const ReactThreeRenderer_ = () => {
-    useRequestAnimationFrame();
-
-    return (
-      <Renderer.ReactThreeRenderer config={config} state={engine.getState()} />
+      </div>
     );
   };
 
@@ -73,10 +68,7 @@ function setup() {
     }
   });
 
-  document
-    .getElementById("app")
-    ?.append(domRenderer.getDOM(), canvasRenderer.getDOM(), reactRendererDOM);
-  ReactDOM.render(<ReactRenderer_ />, reactRendererDOM);
+  ReactDOM.render(<ReactRenderer_ />, document.getElementById("app"));
 
   function tick() {
     engine.tick();

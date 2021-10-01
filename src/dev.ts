@@ -34,7 +34,7 @@ export const config: GameConfig = {
     canvas: true,
     dom: false,
     react: false,
-    three: true,
+    three: false,
   },
 };
 
