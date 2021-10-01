@@ -3,6 +3,7 @@ export interface GameConfig {
     width: number;
     height: number;
     lanes: number;
+    buffer: number;
   };
 
   car: {

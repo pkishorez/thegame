@@ -11,6 +11,7 @@ export class MyCar {
   laneIndex = 0;
   x = 0;
   config: MyCarConfig;
+  target: number;
 
   constructor(config: GameConfig) {
     this.config = this.transformConfig(config);
@@ -29,13 +30,13 @@ export class MyCar {
   }
 
   tick(step = 1) {
-    const target = this.getPosXOfLane(this.laneIndex);
-    if (target !== this.x) {
+    this.target = this.getPosXOfLane(this.laneIndex);
+    if (this.target !== this.x) {
       const prevX = this.x;
-      this.x += Math.sign(target - this.x) * this.config.step * step;
+      this.x += Math.sign(this.target - this.x) * this.config.step * step;
 
-      if (Math.sign(target - prevX) !== Math.sign(target - this.x)) {
-        this.x = target;
+      if (Math.sign(this.target - prevX) !== Math.sign(this.target - this.x)) {
+        this.x = this.target;
       }
     }
   }
@@ -53,6 +54,6 @@ export class MyCar {
   }
 
   getState() {
-    return { laneIndex: this.laneIndex, posX: this.x };
+    return { laneIndex: this.laneIndex, posX: this.x, targetX: this.target };
   }
 }

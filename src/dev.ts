@@ -6,6 +6,7 @@ export const config: GameConfig = {
     width: 200,
     height: 600,
     lanes: 4,
+    buffer: 0,
   },
   car: {
     width: 20,

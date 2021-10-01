@@ -1,14 +1,15 @@
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import React, { useEffect } from "react";
 import { EngineState } from "../..";
 import { GameConfig } from "../../../config";
-import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
 const getLanePosition = (arena: GameConfig["arena"], laneIndex: number) => {
   const laneWidth = arena.width / arena.lanes;
   return Math.round((arena.width / arena.lanes) * laneIndex) + laneWidth / 2;
 };
+
+const transformY = (height: number, y: number) => height - y;
 
 function Box({
   x,
@@ -45,11 +46,35 @@ const DevTools = () => {
         new CustomEvent("observe", { detail: three.scene })
       );
     }
-    three.scene.background = new THREE.Color(0xffffff);
   }, []);
 
   return null;
 };
+
+const Child = ({
+  config,
+  state,
+}: {
+  state: EngineState;
+  config: GameConfig;
+}) => {
+  useFrame(({ camera }) => {
+    camera.position.set(
+      state.mycar.posX - config.arena.width / 2,
+      -config.arena.height / 2 - config.car.height * 2,
+      config.car.height * 3
+    );
+    camera.lookAt(state.mycar.posX - config.arena.width / 2, 0, 0);
+  });
+
+  useThree((three) => {
+    three.scene.background = new THREE.Color(background);
+  });
+
+  return null;
+};
+
+const background = "rgb(240,240,240)";
 
 export const ReactThreeRenderer = ({
   config,
@@ -64,31 +89,33 @@ export const ReactThreeRenderer = ({
     <div
       style={{
         backgroundColor: "black",
-        width: arena.width,
+        width: arena.width * 2,
         height: arena.height,
       }}
     >
       <Canvas
-        camera={{ far: 1000, near: 0.1, position: [0, 0, arena.width * 2] }}
+        gl={{ antialias: true }}
+        camera={{
+          far: 30000,
+          near: 0.1,
+          fov: ((Math.atan(1) * 180) / Math.PI) * 2,
+          position: [
+            state.mycar.posX,
+            -arena.height / 2 - car.height * 2,
+            car.height * 3,
+          ],
+        }}
       >
-        <fog attach="fog" args={["white", 100, 800]} />
+        <fog attach="fog" args={[background, 100, 1000]} />
+        <Child config={config} state={state} />
         <DevTools />
         <ambientLight intensity={0.5} />
         <directionalLight color="white" position={[2, 3, 5]} />
-        <OrbitControls />
-        {/* <group rotation={[Math.PI, -Math.PI, 0]}> */}
+        {/* <OrbitControls /> */}
         <group position={[-arena.width / 2, -arena.height / 2, 0]}>
           <Box
-            width={car.width}
-            height={car.height}
-            depth={5}
-            x={state.mycar.posX}
-            y={arena.height - 20}
-            z={5 / 2}
-          />
-          <Box
             width={arena.width}
-            height={arena.height}
+            height={arena.height * 2}
             depth={0.2}
             x={arena.width / 2}
             y={arena.height / 2}
@@ -105,7 +132,7 @@ export const ReactThreeRenderer = ({
                 <Box
                   key={divider.id + "" + i}
                   x={posX}
-                  y={divider.posY}
+                  y={transformY(arena.height, divider.posY)}
                   z={0.2}
                   depth={0.2}
                   width={dividerConfig.width}
@@ -120,16 +147,25 @@ export const ReactThreeRenderer = ({
               <Box
                 key={id + "" + i}
                 x={getLanePosition(arena, laneIndex)}
-                y={posY}
+                y={transformY(arena.height, posY)}
                 z={5 / 2}
                 width={car.width}
                 height={car.height}
-                depth={5}
+                depth={10}
+                color={car.opponent.color}
               />
             ));
           })}
+          <Box
+            width={car.width}
+            height={car.height}
+            depth={10}
+            x={state.mycar.posX}
+            y={transformY(arena.height, arena.height - car.height - 20)}
+            z={5 / 2}
+            color={car.mycar.color}
+          />
         </group>
-        {/* </group> */}
       </Canvas>
     </div>
   );
