@@ -3,7 +3,11 @@ body {
   margin: 0;
 }
 body {
+  height: 100vh;
   background-color: gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #app > .renderer-container {
@@ -11,7 +15,6 @@ body {
   justify-content: center;
 
   margin: auto;
-  margin-top: 100px;
   transition: width 0.3s, height 0.3s;
 
   > * {

@@ -5,7 +5,7 @@ export const config: GameConfig = {
   arena: {
     width: 200,
     height: 600,
-    lanes: 4,
+    lanes: 5,
     buffer: 0,
   },
   car: {
@@ -31,10 +31,10 @@ export const config: GameConfig = {
   },
 
   renderer: {
-    canvas: true,
+    canvas: false,
     dom: false,
     react: false,
-    three: false,
+    three: true,
   },
 };
 

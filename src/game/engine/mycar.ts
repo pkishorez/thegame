@@ -8,10 +8,10 @@ interface MyCarConfig {
 }
 
 export class MyCar {
-  laneIndex = 0;
+  laneIndex = 2;
   x = 0;
   config: MyCarConfig;
-  target: number;
+  target: number = 0;
 
   constructor(config: GameConfig) {
     this.config = this.transformConfig(config);
@@ -30,13 +30,13 @@ export class MyCar {
   }
 
   tick(step = 1) {
-    this.target = this.getPosXOfLane(this.laneIndex);
-    if (this.target !== this.x) {
+    const target = this.getPosXOfLane(this.laneIndex);
+    if (target !== this.x) {
       const prevX = this.x;
-      this.x += Math.sign(this.target - this.x) * this.config.step * step;
+      this.x += Math.sign(target - this.x) * this.config.step * step;
 
-      if (Math.sign(this.target - prevX) !== Math.sign(this.target - this.x)) {
-        this.x = this.target;
+      if (Math.sign(target - prevX) !== Math.sign(target - this.x)) {
+        this.x = target;
       }
     }
   }
@@ -54,6 +54,10 @@ export class MyCar {
   }
 
   getState() {
-    return { laneIndex: this.laneIndex, posX: this.x, targetX: this.target };
+    return {
+      laneIndex: this.laneIndex,
+      posX: this.x,
+      targetX: this.getPosXOfLane(this.laneIndex),
+    };
   }
 }
